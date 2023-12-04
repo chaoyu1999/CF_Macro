@@ -9,7 +9,7 @@ add_executable(msdk
         include/main.h
         src/KeyboardMouse.cpp
         include/KeyboardMouse.h
-        include/InputListener.h src/InputListener.cpp)
+        include/InputListener.h src/InputListener.cpp src/ThreadPool.cpp include/ThreadPool.h)
 target_link_libraries(msdk ${CMAKE_SOURCE_DIR}/lib/msdk.lib)
 
 

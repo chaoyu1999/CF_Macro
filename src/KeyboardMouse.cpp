@@ -1,7 +1,6 @@
 ﻿#include "../include/KeyboardMouse.h"
 
-KeyboardMouse::KeyboardMouse() {
-    m_hdl = M_Open(1);
+KeyboardMouse::KeyboardMouse(): isQuickClicking(false), mtx(), m_hdl(M_Open(1)) {
     if (m_hdl == INVALID_HANDLE_VALUE) {
         MessageBox(nullptr, "An error occurred in KeyboardMouse::KeyboardMouse().", "Error", MB_OK | MB_ICONERROR);
     }
@@ -13,7 +12,6 @@ KeyboardMouse *KeyboardMouse::GetInstance() {
 }
 
 KeyboardMouse::~KeyboardMouse() {
-    std::cout << "~KeyboardMouse() destroy" << std::endl;
     M_Close(m_hdl);
 }
 
@@ -59,4 +57,12 @@ int KeyboardMouse::ShootInstantly() {
     //释放q键
     M_KeyUp(m_hdl, 30);
     return 0;
+}
+
+bool KeyboardMouse::getIsQuickClicking() const {
+    return isQuickClicking;
+}
+
+void KeyboardMouse::setIsQuickClicking(bool f) {
+    this->isQuickClicking = f;
 }

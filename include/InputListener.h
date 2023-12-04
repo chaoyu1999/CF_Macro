@@ -5,12 +5,12 @@
 #include <Windows.h>
 #include <thread>
 # include "KeyboardMouse.h"
-
+# include "ThreadPool.h"
 enum KeyState {
     None,       // 无按键按下
-    B_Pressed,  // B 被按下
-    One_Pressed, // 数字键1被按下
-    Two_Pressed, // 数字键2被按下
+    B_Pressed,  // 'B'键被按下
+    PurgatoryGatling, // 数字键1被按下，则是炼狱
+    SniperRifle, // 数字键2被按下，则是狙
 };
 
 class InputListener {
@@ -19,6 +19,7 @@ private:
     static HHOOK hKeyboardHook; // 键盘钩子句柄
     static KeyState keyState; // 按键状态
     static KeyboardMouse *km; // 键鼠模拟器
+    static ThreadPool pool; // 创建线程池，假设我们想要4个工作线程
 private:
     InputListener() = default; // 构造函数私有化
     static LRESULT CALLBACK keyboardProc(int nCode, WPARAM wParam, LPARAM lParam); // 键盘钩子回调函数

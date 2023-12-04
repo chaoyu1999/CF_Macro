@@ -1,10 +1,11 @@
+#include <future>
 # include "../include/InputListener.h"
 
 HHOOK InputListener::hMouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, nullptr, 0);; // 鼠标钩子句柄
 HHOOK InputListener::hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc, nullptr, 0);; // 键盘钩子句柄
 KeyState InputListener::keyState = None; // 按键状态
 KeyboardMouse *InputListener::km = KeyboardMouse::GetInstance(); // 键鼠模拟器
-
+ThreadPool InputListener::pool(5); // 创建线程池，假设我们想要4个工作线程
 
 void InputListener::StartListening() {
     MSG msg;
@@ -53,7 +54,6 @@ LRESULT InputListener::mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 
-
 /**
  * @brief 武器状态切换
  *
@@ -72,10 +72,10 @@ void InputListener::switchWeaponState(int nCode, WPARAM wParam, LPARAM lParam) {
                 keyState = B_Pressed;
             }
             if (vkCode == '1' && keyState == B_Pressed) { // 检查是否是数字键1
-                keyState = One_Pressed;
+                keyState = PurgatoryGatling;
             }
             if (vkCode == '2' && keyState == B_Pressed) {
-                keyState = Two_Pressed;
+                keyState = SniperRifle;
             }
         }
     }
@@ -88,21 +88,33 @@ void InputListener::simulateWeaponAttack(int nCode, WPARAM wParam, LPARAM lParam
         DWORD vkCode = kbdStruct->vkCode;
         // 检查按键按下事件
         if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
-            // 如果keyState == One_Pressed，且按下的键是'F5'
-            if (keyState == One_Pressed && vkCode == VK_F5) {
-                // 炼狱速点
-                std::cout << "炼狱速点" << std::endl;
-                km->QuickClick();
+            if (keyState == PurgatoryGatling && vkCode == VK_F5) { // 如果主武器是炼狱加特林，且按下F5，则开始炼狱速点
+                if (!km->getIsQuickClicking()) {
+                    // 如果当前没有循环，则开始循环
+                    std::cout << "开始炼狱速点" << std::endl;
+                    km->setIsQuickClicking(true);
+                    pool.enqueue([&] {
+                        while (km->getIsQuickClicking()) {
+                            km->QuickClick();
+                        }
+                    });
+                } else {
+                    // 如果当前正在循环，则停止循环
+                    std::cout << "停止炼狱速点" << std::endl;
+                    km->setIsQuickClicking(false);
+                }
             }
         }
 
         // 检查鼠标释放事件
         if (wParam == WM_RBUTTONUP) {
             // 如果keyState == Two_Pressed
-            if (keyState == Two_Pressed) {
+            if (keyState == SniperRifle) {
                 // 瞬狙
                 std::cout << "瞬狙" << std::endl;
-                km->ShootInstantly();
+                pool.enqueue([&] {
+                    km->ShootInstantly();
+                });
             }
         }
     }
