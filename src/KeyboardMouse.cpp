@@ -1,9 +1,15 @@
-﻿#include "KeyboardMouse.h"
+﻿#include "../include/KeyboardMouse.h"
 
 KeyboardMouse::KeyboardMouse() {
-    std::cout << "KeyboardMouse init" << std::endl;
     m_hdl = M_Open(1);
+    if (m_hdl == INVALID_HANDLE_VALUE) {
+        MessageBox(nullptr, "An error occurred in KeyboardMouse::KeyboardMouse().", "Error", MB_OK | MB_ICONERROR);
+    }
+}
 
+KeyboardMouse *KeyboardMouse::GetInstance() {
+    static KeyboardMouse instance;
+    return &instance;
 }
 
 KeyboardMouse::~KeyboardMouse() {
@@ -12,10 +18,11 @@ KeyboardMouse::~KeyboardMouse() {
 }
 
 int KeyboardMouse::QuickClick() {
+    std::lock_guard<std::mutex> lock(mtx); // 在函数开始时加锁，在函数结束时自动解锁
     //按下鼠标左键
     M_LeftDown(m_hdl);
     //等待一个随机的时间，范围在100到170之间
-    M_DelayRandom(100, 150);
+    M_DelayRandom(90, 130);
     //释放鼠标左键
     M_LeftUp(m_hdl);
     //等待一个随机的时间，范围在10到30之间
@@ -23,17 +30,13 @@ int KeyboardMouse::QuickClick() {
     return 0;
 }
 
-KeyboardMouse *KeyboardMouse::GetInstance() {
-    static KeyboardMouse instance;
-    return &instance;
-}
 
 int KeyboardMouse::ShootInstantly() {
     // 开枪
     //按下鼠标左键
     M_LeftDown(m_hdl);
     //等待一个随机的时间，范围在10到20之间
-    M_DelayRandom(20, 50);
+    M_DelayRandom(10, 20);
     //释放鼠标左键
     M_LeftUp(m_hdl);
 
@@ -41,32 +44,19 @@ int KeyboardMouse::ShootInstantly() {
     //按下q键
     M_KeyDown(m_hdl, 32);
     //等待一个随机的时间，范围在9到14之间
-    M_DelayRandom(30, 50);
+    M_DelayRandom(10, 20);
     //释放q键
     M_KeyUp(m_hdl, 32);
 
     //等待一个随机的时间，范围在120到130之间
-    M_DelayRandom(130, 150);
+    M_DelayRandom(100, 130);
 
     // 换枪
     //按下q键
     M_KeyDown(m_hdl, 30);
     //等待一个随机的时间，范围在9到14之间
-    M_DelayRandom(20, 50);
+    M_DelayRandom(9, 25);
     //释放q键
     M_KeyUp(m_hdl, 30);
-    return 0;
-}
-
-int KeyboardMouse::QuickClickR() {
-//    std::cout << "QuickClickR" << std::endl;
-    //按下鼠标左键
-    M_RightDown(m_hdl);
-    //等待一个随机的时间，范围在100到170之间
-    M_DelayRandom(20, 50);
-    //释放鼠标左键
-    M_RightUp(m_hdl);
-    //等待一个随机的时间，范围在10到30之间
-    M_DelayRandom(10, 20);
     return 0;
 }

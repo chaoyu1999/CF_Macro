@@ -2,18 +2,15 @@ cmake_minimum_required(VERSION 3.23)
 project(msdk)
 
 set(CMAKE_CXX_STANDARD 11)
-include_directories(.)
-include_directories(${CMAKE_THREAD_LIBS_INIT})
-link_directories(E:\\Msdk)
+set(CMAKE_EXE_LINKER_FLAGS -static)
 
 add_executable(msdk
-        main.cpp
-        main.h
-        KeyboardMouse.cpp
-        KeyboardMouse.h
-        )
-find_package(Threads REQUIRED)
-target_link_libraries(msdk PRIVATE   E:\\Msdk\\msdk.dll Threads::Threads)
+        src/main.cpp
+        include/main.h
+        src/KeyboardMouse.cpp
+        include/KeyboardMouse.h
+        include/InputListener.h src/InputListener.cpp)
+target_link_libraries(msdk ${CMAKE_SOURCE_DIR}/lib/msdk.lib)
 
 
 
