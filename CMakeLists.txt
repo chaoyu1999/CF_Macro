@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXE_LINKER_FLAGS -static)
 
 add_executable(msdk
-        src/main.cpp
+        main.cpp
         include/main.h
         src/KeyboardMouse.cpp
         include/KeyboardMouse.h

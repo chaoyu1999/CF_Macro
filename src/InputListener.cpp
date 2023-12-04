@@ -5,7 +5,7 @@ HHOOK InputListener::hMouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, nullp
 HHOOK InputListener::hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc, nullptr, 0);; // 键盘钩子句柄
 KeyState InputListener::keyState = None; // 按键状态
 KeyboardMouse *InputListener::km = KeyboardMouse::GetInstance(); // 键鼠模拟器
-ThreadPool InputListener::pool(5); // 创建线程池，假设我们想要4个工作线程
+ThreadPool InputListener::pool(5); // 创建线程池有5个工作线程
 
 void InputListener::StartListening() {
     MSG msg;
@@ -91,16 +91,17 @@ void InputListener::simulateWeaponAttack(int nCode, WPARAM wParam, LPARAM lParam
             if (keyState == PurgatoryGatling && vkCode == VK_F5) { // 如果主武器是炼狱加特林，且按下F5，则开始炼狱速点
                 if (!km->getIsQuickClicking()) {
                     // 如果当前没有循环，则开始循环
-                    std::cout << "开始炼狱速点" << std::endl;
                     km->setIsQuickClicking(true);
                     pool.enqueue([&] {
-                        while (km->getIsQuickClicking()) {
+                        std::cout << "开始炼狱速点" << std::endl;
+                        while (km->getIsQuickClicking() && keyState == PurgatoryGatling) {
                             km->QuickClick();
                         }
+                        km->setIsQuickClicking(false);
+                        std::cout << "停止炼狱速点" << std::endl;
                     });
                 } else {
                     // 如果当前正在循环，则停止循环
-                    std::cout << "停止炼狱速点" << std::endl;
                     km->setIsQuickClicking(false);
                 }
             }
@@ -111,9 +112,9 @@ void InputListener::simulateWeaponAttack(int nCode, WPARAM wParam, LPARAM lParam
             // 如果keyState == Two_Pressed
             if (keyState == SniperRifle) {
                 // 瞬狙
-                std::cout << "瞬狙" << std::endl;
                 pool.enqueue([&] {
                     km->ShootInstantly();
+                    std::cout << "瞬狙" << std::endl;
                 });
             }
         }
