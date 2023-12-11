@@ -1,0 +1,3 @@
+"D:\Program Files (x86)\CLion 2022.2.3\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\msdk.dir/objects.a
+"D:\Program Files (x86)\CLion 2022.2.3\bin\mingw\bin\ar.exe" qc CMakeFiles\msdk.dir/objects.a @CMakeFiles\msdk.dir\objects1.rsp
+"D:\Program Files (x86)\CLion 2022.2.3\bin\mingw\bin\g++.exe" -O3 -DNDEBUG -static -Wl,--whole-archive CMakeFiles\msdk.dir/objects.a -Wl,--no-whole-archive -o msdk.exe -Wl,--out-implib,libmsdk.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\msdk.dir\linklibs.rsp

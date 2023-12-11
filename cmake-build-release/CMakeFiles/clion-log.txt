@@ -1,0 +1,4 @@
+"D:\Program Files (x86)\CLion 2022.2.3\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - MinGW Makefiles" -S E:\CF_Macro -B E:\CF_Macro\cmake-build-release
+-- Configuring done
+-- Generating done
+-- Build files have been written to: E:/CF_Macro/cmake-build-release
